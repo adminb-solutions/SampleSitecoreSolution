@@ -7,7 +7,7 @@ using System.Web.Routing;
 
 namespace SampleSite
 {
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : Sitecore.Web.Application
     {
         protected void Application_Start()
         {
