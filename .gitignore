@@ -3,4 +3,5 @@
 /packages
 /.vs
 *.user
-/.artifacts
+.artifacts
+.logs

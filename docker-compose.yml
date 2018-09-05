@@ -1,0 +1,58 @@
+version: '2.3'
+
+services:
+  sitecore:
+    cpu_count: 6
+    image: sitecore-docker_sitecore:latest
+    volumes:
+      - .\serialization:c:\inetpub\wwwroot\sitecore\App_Data\Unicorn
+      - .\.logs\sitecore:c:\inetpub\wwwroot\sitecore\App_Data\logs
+      - .\SampleSite\.artifacts:C:\Workspace
+    depends_on:
+      - xconnect
+      - mssql
+      - solr
+    networks:
+      app_net:
+        ipv4_address: 172.16.1.3
+
+  xconnect:
+    image: sitecore-docker_xconnect:latest
+    volumes:
+      - .\.logs\xconnect:C:\inetpub\wwwroot\xconnect\App_data\Logs
+    networks:
+      app_net:
+        ipv4_address: 172.16.1.5    
+    depends_on:
+      - mssql
+      - solr
+
+  mssql:
+    image: sitecore-docker_mssql:latest
+    environment:
+      ACCEPT_EULA: "Y"
+      sa_password: ${SQL_SA_PASSWORD}
+    mem_limit: 2048m
+    cpu_count: 4
+    networks:
+      app_net:
+        ipv4_address: 172.16.1.2
+
+  solr:
+    image: sitecore-docker_solr:latest
+    ports:
+      - ${SOLR_PORT}
+    mem_limit: 4096m
+    networks:
+      app_net:
+        ipv4_address: 172.16.1.4
+
+
+networks:
+  app_net:
+    ipam:
+      driver: default
+      config:
+        -
+          subnet: 172.16.1.0/24
+          gateway: 172.16.1.1
